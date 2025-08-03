@@ -1,24 +1,86 @@
-function App() {
-  return (
-    <main>
-      <h1>Hi, I'm (your name)</h1>
-      <img alt="My profile pic" src="https://via.placeholder.com/350" />
-      <h2>About Me</h2>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </p>
+// src/App.js
+import React, { useState } from "react";
 
-      <div>
-        <a href="https://github.com">GitHub</a>
-        <a href="https://linkedin.com">LinkedIn</a>
-      </div>
-    </main>
+function App() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    interests: [],
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const interestsList = ["Technology", "Design", "Business"];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCheckbox = (e) => {
+    const { value, checked } = e.target;
+    let updated = [...formData.interests];
+
+    if (checked) {
+      updated.push(value);
+    } else {
+      updated = updated.filter((i) => i !== value);
+    }
+
+    setFormData({ ...formData, interests: updated });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  return (
+    <div>
+      {!submitted ? (
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="name">Name:</label>
+          <input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+
+          <label htmlFor="email">Email:</label>
+          <input
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+
+          <div>
+            {interestsList.map((interest) => (
+              <div key={interest}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={interest}
+                    onChange={handleCheckbox}
+                    aria-label={interest}
+                  />
+                  {interest}
+                </label>
+              </div>
+            ))}
+          </div>
+
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <div>
+          <h2>Thank you, {formData.name}!</h2>
+          {formData.interests.length > 0 && (
+            <p>You selected: {formData.interests.join(", ")}</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
